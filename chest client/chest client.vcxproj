@@ -129,6 +129,9 @@
   <ItemGroup>
     <ClCompile Include="chest client.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\chest server\Project1\CardClass.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

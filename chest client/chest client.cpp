@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <WinSock2.h>
+#include "CardClass.h"
 #pragma comment(lib, "ws2_32.lib")
 using namespace std;
 using namespace std;
@@ -11,6 +12,19 @@ string TalkToServer(string msg, SOCKET sockk) {
 	send(sockk, msg.c_str(), msg.size(), 0);
 	recv(sockk, buf, 2000, 0);
 	return buf;
+}
+vector <int> decodestatus(string answer) {
+	string data = "";
+	vector <int> status;
+	for (int i = 0; i < answer.size(); ++i) {
+		while (answer[i] != ' ') {
+			data += answer[i];
+			++i;
+		}
+		status.push_back(STI(data));
+		data = "";
+	}
+	return status;
 }
 int main() {
 	WSADATA wsd;
@@ -33,18 +47,77 @@ int main() {
 
 		//INADDR_LOOPBACK позволяет рабтать с сервером, расположенном на том же компе что и клиент
 		string msg = "";
-		if (SOCKET_ERROR == connect(sockk, (struct sockaddr*)&addr, sizeof(addr))) //Связываем сокет с адресом
-			cout << "Error with binding socket";
-		
+		string data = "";
+		vector <int> status;
+		vector <int> mycards;
+		if (SOCKET_ERROR == connect(sockk, (struct sockaddr*)&addr, sizeof(addr))) { //Связываем сокет с адресом
+			cout << "Error with binding socket" << endl;
+		}
+		else {
+			cout << "Connected, you can enter your name now" << endl;
+		}
 		while (input != "quit") {
-			
 			cin >> input;
-			msg = input;
-			answer = TalkToServer(msg, sockk);
-			cout << "ans: " << answer << endl;
+			input = to_lower(input);
+			if (input == "help") {
+				cout << "commands avaible:" << endl;
+				cout << "help - show this menu" << endl;
+				cout << "0 or status - to look compactly at your cards" << endl;
+				cout << "1 or getcards - to get list of your cards" << endl;
+				cout << "2 3 4 5 6 7 8 9 10 J Q K A - ask enemy for a card, only legal move will be send to the server!!!" << endl;
+				cout << "quit - quit, this finishes the game for everyone!!!" << endl;
+			}
+			else if (input == "0" || input == "status") {
+				msg = input;
+				answer = TalkToServer(msg, sockk);
+				status.clear();
+				status = decodestatus(answer);
+				for (int i = 0; i < status.size(); ++i) {
+					cout << status[i] << " ";
+				}
+				cout << endl << "2 3 4 5 6 7 8 9 10 J Q K A" << endl;
+			}
+			else if (input == "1" || input == "mycards") {
+				msg = input;
+				answer = TalkToServer(msg, sockk);
+				mycards.clear();
+				for (int i = 0; i < answer.size(); ++i) {
+					while (answer[i] != ' ') {
+						data += answer[i];
+						++i;
+					}
+					mycards.push_back(STI(data));
+					data = "";
+				}
+				for (int i = 0; i < mycards.size(); ++i) {
+					cout << Card(mycards[i]);
+				}
+			}
+			else if ((input >= "2" && input <= "9") || input == "10" || input == "j" || input == "q" || input == "k" || input == "a") {
+				status.clear();
+				status = decodestatus(TalkToServer("0", sockk));
+				msg = input;
+				int num = 0;
+				if (input == "j")
+					num = 9;
+				else if (input == "q")
+					num = 10;
+				else if (input == "k")
+					num = 11;
+				else if (input == "a")
+					num = 12;
+				else
+					num = STI(input);
+				if (status[num] == 0)
+					cout << "this move is illigal, you don't have this card" << endl;
+				else
+					cout << TalkToServer(msg, sockk) << endl;
+			}
+			else {
+				cout << "invalid command, type help to see avaible commands" << endl;
+			}
 		}
 		closesocket(sockk);
 	}
-	
 	return 0;
 }
