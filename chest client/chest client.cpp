@@ -27,6 +27,7 @@ vector <int> decodestatus(string answer) {
 	return sts;
 }
 int main() {
+	cout << "clientv1" << endl;
 	WSADATA wsd;
 	string input = "";
 	string name = "";
