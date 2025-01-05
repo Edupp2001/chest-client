@@ -55,7 +55,15 @@ int main() {
 		}
 		else {
 			cout << "Connected, you can enter your name now" << endl;
+			do
+			{
+				cin >> input;
+				msg = input;
+				data = TalkToServer(msg, sockk);
+				data = TalkToServer("0", sockk);
+			} while (data == "the game is not started yet");
 		}
+		cout << "game is ready" << endl;
 		while (input != "quit") {
 			cin >> input;
 			input = to_lower(input);
@@ -68,7 +76,7 @@ int main() {
 				cout << "quit - quit, this finishes the game for everyone!!!" << endl;
 			}
 			else if (input == "0" || input == "status") {
-				msg = input;
+				msg = "0";
 				answer = TalkToServer(msg, sockk);
 				status.clear();
 				status = decodestatus(answer);
@@ -78,7 +86,7 @@ int main() {
 				cout << endl << "2 3 4 5 6 7 8 9 10 J Q K A" << endl;
 			}
 			else if (input == "1" || input == "mycards") {
-				msg = input;
+				msg = "1";
 				answer = TalkToServer(msg, sockk);
 				mycards.clear();
 				for (int i = 0; i < answer.size(); ++i) {
