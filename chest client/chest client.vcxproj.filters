@@ -28,5 +28,8 @@
     <None Include="..\x64\Debug\chest client.exe">
       <Filter>Исходные файлы</Filter>
     </None>
+    <None Include="..\x64\Release\chest client rel.exe">
+      <Filter>Исходные файлы</Filter>
+    </None>
   </ItemGroup>
 </Project>

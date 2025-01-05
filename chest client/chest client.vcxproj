@@ -134,6 +134,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\x64\Debug\chest client.exe" />
+    <None Include="..\x64\Release\chest client rel.exe" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
