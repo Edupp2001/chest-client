@@ -26,8 +26,19 @@ vector <int> decodestatus(string answer) {
 	}
 	return sts;
 }
+string waitforturn(SOCKET sockk) {
+	string answer;
+	answer = TalkToServer("whosturn", sockk);
+	do {
+		char buf[2000];
+		memset(buf, 0, 2000);
+		recv(sockk, buf, 2000, 0);
+		answer = buf;
+	} while (answer == "not your turn");
+	return answer;
+}
 int main() {
-	cout << "clientv4" << endl;
+	cout << "clientv5" << endl;
 	WSADATA wsd;
 	string input = "";
 	string name = "";
@@ -67,7 +78,7 @@ int main() {
 			cout << data << endl;
 			cout << "2 3 4 5 6 7 8 9 10 J Q K A" << endl;
 			while (input != "quit") {
-				
+				cout << waitforturn(sockk) << endl;
 				cin >> input;
 				input = to_lower(input);
 				if (input == "help") {
@@ -97,12 +108,12 @@ int main() {
 					if (answer != "game is finished") {
 						mycards.clear();
 						for (int i = 0; i < answer.size(); ++i) {
+							data = "";
 							while (i < answer.size() && answer[i] != ' ') {
 								data += answer[i];
 								++i;
 							}
 							mycards.push_back(STI(data));
-							data = "";
 						}
 						for (int i = 0; i < mycards.size(); ++i) {
 							cout << Card(mycards[i]);
@@ -131,17 +142,6 @@ int main() {
 						else {
 							answer = TalkToServer(msg, sockk);
 							cout << answer << endl;
-							if (answer != "good choice, your turn again") {
-								answer = TalkToServer("whosturn", sockk);
-								do {
-									char buf[2000];
-									memset(buf, 0, 2000);
-									recv(sockk, buf, 2000, 0);
-									answer = buf;
-								} while (answer == "not your turn");
-								cout << answer << endl;
-							}
-							
 						}
 					}
 				}
