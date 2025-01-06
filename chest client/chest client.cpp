@@ -27,7 +27,7 @@ vector <int> decodestatus(string answer) {
 	return sts;
 }
 int main() {
-	cout << "clientv3" << endl;
+	cout << "clientv4" << endl;
 	WSADATA wsd;
 	string input = "";
 	string name = "";
@@ -130,7 +130,7 @@ int main() {
 							cout << "this move is illigal, you don't have this card" << endl;
 						else {
 							answer = TalkToServer(msg, sockk);
-							if (answer != "good choice, your turn again") {
+							if (answer == "good choice, your turn again") {
 								answer = "not your turn";
 								while (answer == "not your turn") {
 									char buf[2000];
