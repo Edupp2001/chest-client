@@ -130,16 +130,17 @@ int main() {
 							cout << "this move is illigal, you don't have this card" << endl;
 						else {
 							answer = TalkToServer(msg, sockk);
-							if (answer == "good choice, your turn again") {
+							cout << answer << endl;
+							if (answer != "good choice, your turn again") {
 								answer = "not your turn";
 								while (answer == "not your turn") {
 									char buf[2000];
 									memset(buf, 0, 2000);
 									recv(sockk, buf, 2000, 0);
-									answer = buf;
+									answer = TalkToServer("whosturn", sockk);
 								}
 							}
-							cout << answer << endl;
+							
 						}
 					}
 				}
