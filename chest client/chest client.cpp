@@ -27,7 +27,7 @@ vector <int> decodestatus(string answer) {
 	return sts;
 }
 int main() {
-	cout << "clientv2" << endl;
+	cout << "clientv3" << endl;
 	WSADATA wsd;
 	string input = "";
 	string name = "";
@@ -63,92 +63,94 @@ int main() {
 			{
 				data = TalkToServer("0", sockk);
 			} while (data == "the game is not started yet");
-		}
-		cout << "game is ready" << endl;
-		data = "";
-		while (input != "quit") {
-			cin >> input;
-			input = to_lower(input);
-			if (input == "help") {
-				cout << "commands avaible:" << endl;
-				cout << "help - show this menu" << endl;
-				cout << "info - get opponent's name and their handsize + list enemy asked for your card" << endl;
-				cout << "0 or status - to look compactly at your cards" << endl;
-				cout << "1 or getcards - to get list of your cards" << endl;
-				cout << "2 3 4 5 6 7 8 9 10 J Q K A - ask enemy for a card, only legal move will be send to the server!!!" << endl;
-				cout << "quit - quit, this finishes the game for everyone!!!" << endl;
-			}
-			else if (input == "0" || input == "status") {
-				msg = "0";
-				answer = TalkToServer(msg, sockk);
-				if (answer != "game is finished") {
-					status.clear();
-					status = decodestatus(answer);
-					for (int i = 0; i < status.size(); ++i) {
-						cout << status[i] << " ";
-					}
-					cout << endl << "2 3 4 5 6 7 8 9 10 J Q K A" << endl;
+			cout << "game is ready" << endl;
+			data = "";
+			while (input != "quit") {
+				
+				cin >> input;
+				input = to_lower(input);
+				if (input == "help") {
+					cout << "commands avaible:" << endl;
+					cout << "help - show this menu" << endl;
+					cout << "info - get opponent's name and their handsize + list enemy asked for your card" << endl;
+					cout << "0 or status - to look compactly at your cards" << endl;
+					cout << "1 or getcards - to get list of your cards" << endl;
+					cout << "2 3 4 5 6 7 8 9 10 J Q K A - ask enemy for a card, only legal move will be send to the server!!!" << endl;
+					cout << "quit - quit, this finishes the game for everyone!!!" << endl;
 				}
-			}
-			else if (input == "1" || input == "mycards") {
-				msg = "1";
-				answer = TalkToServer(msg, sockk);
-				if (answer != "game is finished") {
-					cout << answer << " " << endl;
-					mycards.clear();
-					for (int i = 0; i < answer.size(); ++i) {
-						while (i < answer.size() && answer[i] != ' ') {
-							data += answer[i];
-							++i;
+				else if (input == "0" || input == "status") {
+					msg = "0";
+					answer = TalkToServer(msg, sockk);
+					if (answer != "game is finished") {
+						status.clear();
+						status = decodestatus(answer);
+						for (int i = 0; i < status.size(); ++i) {
+							cout << status[i] << " ";
 						}
-						mycards.push_back(STI(data));
-						data = "";
-					}
-					for (int i = 0; i < mycards.size(); ++i) {
-						cout << mycards[i] << " " << Card(mycards[i]);
+						cout << endl << "2 3 4 5 6 7 8 9 10 J Q K A" << endl;
 					}
 				}
-			}
-			else if ((input >= "2" && input <= "9") || input == "10" || input == "j" || input == "q" || input == "k" || input == "a") {
-				status.clear();
-				answer = TalkToServer("0", sockk);
-				if (answer != "game is finished") {
-					status = decodestatus(answer);
+				else if (input == "1" || input == "mycards") {
+					msg = "1";
+					answer = TalkToServer(msg, sockk);
+					if (answer != "game is finished") {
+						mycards.clear();
+						for (int i = 0; i < answer.size(); ++i) {
+							while (i < answer.size() && answer[i] != ' ') {
+								data += answer[i];
+								++i;
+							}
+							mycards.push_back(STI(data));
+							data = "";
+						}
+						for (int i = 0; i < mycards.size(); ++i) {
+							cout << Card(mycards[i]);
+						}
+					}
+				}
+				else if ((input >= "2" && input <= "9") || input == "10" || input == "j" || input == "q" || input == "k" || input == "a") {
+					status.clear();
+					answer = TalkToServer("0", sockk);
+					if (answer != "game is finished") {
+						status = decodestatus(answer);
+						msg = input;
+						int num = 0;
+						if (input == "j")
+							num = 11;
+						else if (input == "q")
+							num = 12;
+						else if (input == "k")
+							num = 13;
+						else if (input == "a")
+							num = 14;
+						else
+							num = STI(input);
+						if (status[num - 2] == 0)
+							cout << "this move is illigal, you don't have this card" << endl;
+						else
+							cout << TalkToServer(msg, sockk) << endl;
+					}
+				}
+				else if (input == "info") {
 					msg = input;
-					int num = 0;
-					if (input == "j")
-						num = 11;
-					else if (input == "q")
-						num = 12;
-					else if (input == "k")
-						num = 13;
-					else if (input == "a")
-						num = 14;
-					else
-						num = STI(input);
-					if (status[num - 2] == 0)
-						cout << "this move is illigal, you don't have this card" << endl;
-					else
-						cout << TalkToServer(msg, sockk) << endl;
+					answer = TalkToServer(msg, sockk);
+					cout << answer << endl;
 				}
-			}
-			else if (input == "info") {
-				msg = input;
-				answer = TalkToServer(msg, sockk);
-				cout << answer << endl;
-			}
-			else {
-				cout << "invalid command, type help to see avaible commands" << endl;
-			}
-			if (answer == "game is finished") {
+				else {
+					cout << "invalid command, type help to see avaible commands" << endl;
+				}
+				if (answer == "game is finished") {
+					char buf[2000];
+					memset(buf, 0, 2000);
+					recv(sockk, buf, 2000, 0);
+					answer = buf;
+					cout << answer << endl;
+					input = "quit";
+				}
 				char buf[2000];
 				memset(buf, 0, 2000);
 				recv(sockk, buf, 2000, 0);
-				answer = buf;
-				cout << answer << endl;
-				input = "quit";
 			}
-			
 		}
 		closesocket(sockk);
 	}
