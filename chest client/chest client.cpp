@@ -132,13 +132,14 @@ int main() {
 							answer = TalkToServer(msg, sockk);
 							cout << answer << endl;
 							if (answer != "good choice, your turn again") {
-								answer = "not your turn";
-								while (answer == "not your turn") {
+								answer = TalkToServer("whosturn", sockk);
+								do {
 									char buf[2000];
 									memset(buf, 0, 2000);
 									recv(sockk, buf, 2000, 0);
-									answer = TalkToServer("whosturn", sockk);
-								}
+									answer = buf;
+								} while (answer == "not your turn");
+								cout << answer << endl;
 							}
 							
 						}
