@@ -29,12 +29,12 @@ vector <int> decodestatus(string answer) {
 string waitforturn(SOCKET sockk) {
 	string answer;
 	answer = TalkToServer("whosturn", sockk);
-	do {
+	if (answer == "not your turn") {
 		char buf[2000];
 		memset(buf, 0, 2000);
 		recv(sockk, buf, 2000, 0);
 		answer = buf;
-	} while (answer == "not your turn");
+	}
 	return answer;
 }
 int main() {
