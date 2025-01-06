@@ -64,7 +64,8 @@ int main() {
 				data = TalkToServer("0", sockk);
 			} while (data == "the game is not started yet");
 			cout << "game is ready" << endl;
-			data = "";
+			cout << data << endl;
+			cout << "2 3 4 5 6 7 8 9 10 J Q K A" << endl;
 			while (input != "quit") {
 				
 				cin >> input;
@@ -147,9 +148,14 @@ int main() {
 					cout << answer << endl;
 					input = "quit";
 				}
-				char buf[2000];
-				memset(buf, 0, 2000);
-				recv(sockk, buf, 2000, 0);
+				answer = "not your turn";
+				while (answer == "not your turn") {
+					char buf[2000];
+					memset(buf, 0, 2000);
+					recv(sockk, buf, 2000, 0);
+					answer = buf;
+				}
+				cout << answer << endl;
 			}
 		}
 		closesocket(sockk);
