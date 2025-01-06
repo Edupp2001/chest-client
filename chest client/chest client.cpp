@@ -38,7 +38,7 @@ string waitforturn(SOCKET sockk) {
 	return answer;
 }
 int main() {
-	cout << "clientv5" << endl;
+	cout << "clientvFINALE" << endl;
 	WSADATA wsd;
 	string input = "";
 	string name = "";
@@ -137,18 +137,23 @@ int main() {
 							num = 14;
 						else
 							num = STI(input);
-						if (status[num - 2] == 0)
-							cout << "this move is illigal, you don't have this card" << endl;
-						else {
-							answer = TalkToServer(msg, sockk);
-							cout << answer << endl;
+						if (num >= 0 && num <= 14) {
+							if (status[num - 2] == 0)
+								cout << "this move is illigal, you don't have this card" << endl;
+							else {
+								answer = TalkToServer(msg, sockk);
+								cout << answer << endl;
+							}
 						}
+						else
+							cout << "unknown error, try again" << endl;
 					}
 				}
 				else if (input == "info") {
 					msg = input;
 					answer = TalkToServer(msg, sockk);
-					cout << answer << endl;
+					if (answer != "game is finished")
+						cout << answer << endl;
 				}
 				else {
 					cout << "invalid command, type help to see avaible commands" << endl;
@@ -166,5 +171,7 @@ int main() {
 		}
 		closesocket(sockk);
 	}
+	system("pause");
+	system("pause");
 	return 0;
 }
